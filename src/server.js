@@ -1,10 +1,13 @@
 // explica ao servidor como lidar com o tratamento de excessões
 require('express-async-errors');
 
-const database = require("./database/sqlite")
+const migrationsRun = require("./database/sqlite/migrations")
 const express = require("express"); //import
 const routes = require('./routes');
 const AppError = require('./utils/appError');
+
+// inicializando banco de dados e migrations
+migrationsRun()
 
 //inicializando o express
 const app = express(); 
@@ -15,8 +18,6 @@ app.use(express.json());
 // inicializando roteador 
 app.use(routes);
 
-// inicializando banco de dados
-database()
 
 // manipulando erro
 app.use((error,request,response,next)=>{
