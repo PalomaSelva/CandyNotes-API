@@ -4,7 +4,7 @@ require('express-async-errors');
 const migrationsRun = require("./database/sqlite/migrations")
 const express = require("express"); //import
 const routes = require('./routes');
-const AppError = require('./utils/appError');
+const AppError = require('./utils/AppError');
 
 // inicializando banco de dados e migrations
 migrationsRun()
@@ -27,7 +27,6 @@ app.use((error,request,response,next)=>{
             statusCode:error.statusCode
         })
     }
-    console.error(error)
     return response.status(500).json({
         message:'Internal Server Error',
         statusCode:500
