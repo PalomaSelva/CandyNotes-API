@@ -5,12 +5,16 @@ const migrationsRun = require("./database/sqlite/migrations");
 const express = require("express"); // import
 const routes = require("./routes");
 const AppError = require("./utils/AppError");
+const cors = require("cors");
 
 // inicializando banco de dados e migrations
 migrationsRun();
 
 // inicializando o express
 const app = express();
+
+// biblioteca que permite que o backend atenda às requisições do front
+app.use(cors());
 
 // informa o tipo de dado que irá receber
 app.use(express.json());
