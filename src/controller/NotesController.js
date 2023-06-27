@@ -3,7 +3,7 @@ const knex = require("../database/knex");
 class NotesController{
     async create(request, response) {
         const { title, description, tags, links } = request.body;
-        const { user_id } = request.params;
+        const user_id = request.user.id;
 
         //  O método insert retorna um array com os IDs dos registros inseridos
         // ao utilizar a sintaxe[note_id], estamos extraindo o primeiro valor dessa lista e atribuindo-o à variável note_id.
@@ -56,8 +56,11 @@ class NotesController{
     }
 
     async index(request, response) {
-        const {user_id, title, tags} = request.query
-        let notes
+        const { title, tags } = request.query;
+
+        const user_id = request.user.id;
+
+        let notes;
 
         if (tags) {
             const filterTags = tags.split(',').map(tag => tag.trim()) // tim() tira os espaços de antes e depois
