@@ -5,7 +5,7 @@ const multer = require('multer')
 const crypto = require('crypto')
 
 const TMP_FOLDER = path.resolve(__dirname, '..', '..', 'tmp')
-const UPLOAD_FOLDER = path.resolve(__dirname, 'uploads')
+const UPLOAD_FOLDER = path.resolve(TMP_FOLDER, 'uploads')
 
 //  os arquivos enviados serão armazenados no disco usando a função de armazenamento em disco do multer.
 // A função de armazenamento em disco permite especificar a pasta de destino para os arquivos.
