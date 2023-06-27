@@ -1,40 +1,39 @@
 // explica ao servidor como lidar com o tratamento de excessões
-require('express-async-errors');
+require('express-async-errors')
 
-const migrationsRun = require("./database/sqlite/migrations")
-const express = require("express"); //import
-const routes = require('./routes');
-const AppError = require('./utils/AppError');
+const migrationsRun = require('./database/sqlite/migrations')
+const express = require('express') // import
+const routes = require('./routes')
+const AppError = require('./utils/AppError')
 
 // inicializando banco de dados e migrations
 migrationsRun()
 
-//inicializando o express
-const app = express(); 
+// inicializando o express
+const app = express()
 
-//informa o tipo de dado que irá receber
-app.use(express.json()); 
+// informa o tipo de dado que irá receber
+app.use(express.json())
 
-// inicializando roteador 
-app.use(routes);
-
+// inicializando roteador
+app.use(routes)
 
 // manipulando erro
-app.use((error,request,response,next)=>{
-    if(error instanceof AppError){ //se as instâncias do erro atual foram as mesmas do erro definido no AppError
-        return response.status(error.statusCode).json({
-            message:error.message,
-            statusCode:error.statusCode
-        })
-    }
-    return response.status(500).json({
-        message:'Internal Server Error',
-        statusCode:500
+app.use((error, request, response, next) => {
+  if (error instanceof AppError) {
+    // se as instâncias do erro atual foram as mesmas do erro definido no AppError
+    return response.status(error.statusCode).json({
+      message: error.message,
+      statusCode: error.statusCode,
     })
-    })
+  }
+  return response.status(500).json({
+    message: 'Internal Server Error',
+    statusCode: 500,
+  })
+})
 
-const PORT = 3000; //porta URL 
-app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
-
-
-
+const PORT = 3000 // porta URL
+app.listen(PORT, () =>
+  console.log(`Server is running on http://localhost:${PORT}`),
+)
