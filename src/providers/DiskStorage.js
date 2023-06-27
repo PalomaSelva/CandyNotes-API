@@ -23,7 +23,7 @@ class DiskStorage {
       return
     }
     // Se o arquivo existir, ele é excluído usando a função unlink()
-ink(filePath)
+    await fs.promises.unlink(filePath)
   }
 }
 
