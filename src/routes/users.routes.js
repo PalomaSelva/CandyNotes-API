@@ -1,27 +1,26 @@
-const { Router } = require('express')
+const { Router } = require("express");
 
-const multer = require('multer')
+const multer = require("multer");
 
-const UsersController = require('../controller/UsersController')
-const ensureAuthenticated = require('../middleware/ensureAuthenticated')
-const uploadConfig = require('../configs/upload')
+const UsersController = require("../controller/UsersController");
+const UserAvatarController = require("../controller/UserAvatarController");
+const ensureAuthenticated = require("../middleware/ensureAuthenticated");
+const uploadConfig = require("../configs/upload");
 
-const upload = multer(uploadConfig.MULTER)
+const upload = multer(uploadConfig.MULTER);
 
-const usersRoutes = Router()
+const usersRoutes = Router();
 
-const usersController = new UsersController()
+const usersController = new UsersController();
+const userAvatarController = new UserAvatarController();
 
-usersRoutes.post('/', usersController.create)
-usersRoutes.put('/', ensureAuthenticated, usersController.update)
+usersRoutes.post("/", usersController.create);
+usersRoutes.put("/", ensureAuthenticated, usersController.update);
 usersRoutes.patch(
-  '/avatar',
+  "/avatar",
   ensureAuthenticated,
-  upload.single('avatar'),
-  (request, response) => {
-    console.log(request.file.filename)
-    response.json()
-  },
-)
+  upload.single("avatar"),
+  userAvatarController.update
+);
 
-module.exports = usersRoutes // Exportando esse arquivo para quem quiser utilizar. No caso, o nosso server.js
+module.exports = usersRoutes; // Exportando esse arquivo para quem quiser utilizar. No caso, o nosso server.js

@@ -1,22 +1,25 @@
 // explica ao servidor como lidar com o tratamento de excessões
-require('express-async-errors')
-
-const migrationsRun = require('./database/sqlite/migrations')
-const express = require('express') // import
-const routes = require('./routes')
-const AppError = require('./utils/AppError')
+require("express-async-errors");
+const uploadConfig = require("./configs/upload");
+const migrationsRun = require("./database/sqlite/migrations");
+const express = require("express"); // import
+const routes = require("./routes");
+const AppError = require("./utils/AppError");
 
 // inicializando banco de dados e migrations
-migrationsRun()
+migrationsRun();
 
 // inicializando o express
-const app = express()
+const app = express();
 
 // informa o tipo de dado que irá receber
-app.use(express.json())
+app.use(express.json());
+
+// para mostrar a imagem do avatar ao fazer uma requisição
+app.use("/files", express.static(uploadConfig.UPLOAD_FOLDER));
 
 // inicializando roteador
-app.use(routes)
+app.use(routes);
 
 // manipulando erro
 app.use((error, request, response, next) => {
@@ -25,15 +28,15 @@ app.use((error, request, response, next) => {
     return response.status(error.statusCode).json({
       message: error.message,
       statusCode: error.statusCode,
-    })
+    });
   }
   return response.status(500).json({
-    message: 'Internal Server Error',
+    message: "Internal Server Error",
     statusCode: 500,
-  })
-})
+  });
+});
 
-const PORT = 3000 // porta URL
+const PORT = 3000; // porta URL
 app.listen(PORT, () =>
-  console.log(`Server is running on http://localhost:${PORT}`),
-)
+  console.log(`Server is running on http://localhost:${PORT}`)
+);
