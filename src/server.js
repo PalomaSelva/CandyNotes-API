@@ -5,7 +5,7 @@ const uploadConfig = require("./configs/upload");
 const migrationsRun = require("./database/sqlite/migrations");
 const express = require("express"); // import
 const routes = require("./routes");
-const AppError = require("./utils/AppError");
+const AppError = require("./utils/appError");
 const cors = require("cors");
 
 // inicializando banco de dados e migrations
