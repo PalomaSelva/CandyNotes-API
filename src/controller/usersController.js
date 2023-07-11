@@ -1,5 +1,5 @@
 const { hash, compare } = require("bcryptjs"); // criptografia de senha
-const AppError = require("../utils/AppError");
+const AppError = require("../utils/appError");
 
 const sqliteConnection = require("../database/sqlite");
 
