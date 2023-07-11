@@ -1,5 +1,6 @@
 // explica ao servidor como lidar com o tratamento de excessões
 require("express-async-errors");
+require("dotenv/config");
 const uploadConfig = require("./configs/upload");
 const migrationsRun = require("./database/sqlite/migrations");
 const express = require("express"); // import
@@ -40,7 +41,7 @@ app.use((error, request, response, next) => {
   });
 });
 
-const PORT = 3000; // porta URL
+const PORT = process.env.PORT || 3333; // porta URL
 app.listen(PORT, () =>
   console.log(`Server is running on http://localhost:${PORT}`)
 );
