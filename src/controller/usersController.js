@@ -2,45 +2,24 @@ const { hash, compare } = require("bcryptjs"); // criptografia de senha
 const AppError = require("../utils/appError");
 
 const sqliteConnection = require("../database/sqlite");
-
+const UserRepository = require("../repositories/UserRepository");
+const UserCreateService = require("../services/userCreateService");
 class UsersController {
-  /*
-   * index - GET para listar vários registros.
-   * show - GET para listar um registro específico.
-   * create - POST para criar um registro.
-   * update - PUT para atualizar um registro.
-   * delete - DELETE para remover um registo.
-   */
-
   async create(request, response) {
     const { name, email, password } = request.body;
-
-    const database = await sqliteConnection();
-    const checkUserExist = await database.get(
-      "SELECT * FROM users WHERE email = (?)",
-      [email]
-    );
-
-    if (checkUserExist) {
-      throw new AppError("Este e-mail já está em uso");
-    }
-
-    const hashedPassword = await hash(password, 8);
-
-    await database.run(
-      "INSERT INTO users (name,email,password) values (?,?,?)",
-      [name, email, hashedPassword]
-    );
+    const userRepository = new UserRepository();
+    const userCreateService = new UserCreateService(userRepository);
+    await userCreateService.execute({ name, email, password });
     return response.status(201).json();
   }
 
   async update(request, response) {
-    const { name, email, password, old_password } = request.body;
-    const user_id = request.user.id;
+    const { name, email, password, oldPassword } = request.body;
+    const userId = request.user.id;
 
     const database = await sqliteConnection();
     const user = await database.get("SELECT * FROM users WHERE id = (?)", [
-      user_id,
+      userId,
     ]);
     if (!user) {
       throw new AppError("Usuário não encontrado");
@@ -59,12 +38,12 @@ class UsersController {
     user.email = email ?? user.email;
 
     // atualizando senha
-    if (password && !old_password) {
+    if (password && !oldPassword) {
       throw new AppError("A senha antiga precisa ser informada.");
     }
 
-    if (password && old_password) {
-      const checkOldPassword = await compare(old_password, user.password);
+    if (password && oldPassword) {
+      const checkOldPassword = await compare(oldPassword, user.password);
 
       if (!checkOldPassword) {
         throw new AppError("A senha antiga não confere.");
@@ -80,7 +59,7 @@ class UsersController {
             password = ?,
             updated_at = DATETIME('now')
             WHERE id = ?`,
-      [user.name, user.email, user.password, user_id]
+      [user.name, user.email, user.password, userId]
     );
 
     return response.json();
