@@ -1,23 +1,33 @@
-const sqliteConnection = require("../database/sqlite");
-
+const knex = require("../database/knex");
 class UserRepository {
   async findByEmail(email) {
-    const database = await sqliteConnection();
-    const user = await database.get("SELECT * FROM users WHERE email = (?)", [
-      email,
-    ]);
+    const user = await knex("users").where({ email }).first();
 
     return user;
   }
 
   async createUser({ name, email, password }) {
-    const database = await sqliteConnection();
-    const userId = await database.run(
-      "INSERT INTO users (name,email,password) values (?,?,?)",
-      [name, email, password]
-    );
-
+    const userId = await knex("users").insert({ name, email, password });
     return { id: userId };
+  }
+
+  // UPDATE
+  async findById(userId) {
+    const [user] = await knex("users").where({ id: userId });
+
+    return user;
+  }
+
+  // caso queira atualizar email
+  async updateEmail(email) {
+    const [userWithUpdatedEmail] = await knex("users").where({ email });
+    return userWithUpdatedEmail;
+  }
+
+  async updateUser({ id, name, email, password, oldPassword }) {
+    knex("users")
+      .where({ id })
+      .update({ id, name, email, password, oldPassword });
   }
 }
 

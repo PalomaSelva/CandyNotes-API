@@ -4,10 +4,11 @@ const DiskStorage = require("../providers/DiskStorage");
 
 class UserAvatarController {
   async update(request, response) {
+    console.log("aqui");
     const diskStorage = new DiskStorage();
-    const user_id = request.user.id;
+    const userId = request.user.id;
     const avatarFileName = request.file.filename;
-    const user = await knex("users").where({ id: user_id }).first();
+    const user = await knex("users").where({ id: userId }).first();
 
     if (!user) {
       throw new AppError(
@@ -23,7 +24,7 @@ class UserAvatarController {
     const filename = await diskStorage.saveFile(avatarFileName);
     user.avatar = filename;
 
-    await knex("users").update(user).where({ id: user_id });
+    await knex("users").update(user).where({ id: userId });
 
     return response.json(user);
   }

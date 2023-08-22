@@ -3,30 +3,31 @@ const knex = require("../database/knex");
 class NotesController {
   async create(request, response) {
     const { title, description, tags, links } = request.body;
-    const user_id = request.user.id;
-
+    const userId = request.user.id;
     //  O método insert retorna um array com os IDs dos registros inseridos
     // ao utilizar a sintaxe[note_id], estamos extraindo o primeiro valor dessa lista e atribuindo-o à variável note_id.
-    const [note_id] = await knex("notes").insert({
+    const [noteId] = await knex("notes").insert({
       title,
       description,
-      user_id,
+      user_id: userId,
     });
-
     const linksInsert = links.map((link) => {
       return {
-        note_id,
+        note_id: noteId,
         url: link,
       };
     });
 
-    await knex("links").insert(linksInsert);
+    if (links) {
+      await knex("links").insert(linksInsert);
+    }
+    console.log(noteId);
 
     const tagsInsert = tags.map((name) => {
       return {
-        note_id,
+        note_id: noteId,
         name,
-        user_id,
+        user_id: userId,
       };
     });
 
@@ -60,7 +61,7 @@ class NotesController {
   async index(request, response) {
     const { title, tags } = request.query;
 
-    const user_id = request.user.id;
+    const userId = request.user.id;
 
     let notes;
 
@@ -69,7 +70,7 @@ class NotesController {
 
       notes = await knex("tags")
         .select(["notes.id", "notes.title", "notes.user_id"])
-        .where("notes.user_id", user_id)
+        .where("notes.user_id", userId)
         .whereLike("notes.title", `%${title}%`)
         .whereIn("name", filterTags)
         .innerJoin("notes", "notes.id", "tags.note_id")
@@ -77,12 +78,12 @@ class NotesController {
         .orderBy("notes.title");
     } else {
       notes = await knex("notes")
-        .where({ user_id })
+        .where({ user_id: userId })
         .whereLike("title", `%${title}%`) // O % indica que o valor de title pode estar em qualquer posição dentro do campo title // e pode ser precedido ou seguido por qualquer sequência de caracteres.
         .orderBy("title");
     }
 
-    const userTags = await knex("tags").where({ user_id });
+    const userTags = await knex("tags").where({ user_id: userId });
     const notesWithTags = notes.map((note) => {
       const noteTags = userTags.filter((tag) => tag.note_id === note.id);
 

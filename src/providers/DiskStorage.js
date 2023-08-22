@@ -20,6 +20,7 @@ class DiskStorage {
     try {
       await fs.promises.stat(filePath); // verifica se o arquivo existe, está disponível, corrompido, etc...
     } catch {
+      console.log("opa migle");
       return;
     }
     // Se o arquivo existir, ele é excluído usando a função unlink()
