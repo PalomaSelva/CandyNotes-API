@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 const UserRepositoryInMemory = require("../repositories/UserRepositoryInMemory");
-const UserCreateService = require("./userCreateService");
+const UserCreateService = require("./userService");
 
 describe("UserCreateService", () => {
   it("user should be created", async () => {
@@ -11,7 +11,7 @@ describe("UserCreateService", () => {
     };
     const userRepositoryInMemory = new UserRepositoryInMemory();
     const userCreateService = new UserCreateService(userRepositoryInMemory);
-    const userCreated = await userCreateService.execute(user);
+    const userCreated = await userCreateService.create(user);
 
     expect(userCreated).toHaveProperty("id");
   });
